@@ -12,10 +12,12 @@ jobs:
       run: find tools/ -type f -iname "*.sh" -exec chmod +x {} +;
     - name: Execute hardware simulator
       run: tools/HardwareSimulator.sh
-    - name: Run test
+    - name: Run tests
       run: |
-          for file in projects/01/*.tst; do
-            tools/HardwareSimulator.sh "$file"
+          for i in {1..1}; do      
+            for file in projects/0"$i"/*.tst; do
+              tools/HardwareSimulator.sh "$file"
+            done;
           done
     - name: Notify success
       if: success()
@@ -23,11 +25,5 @@ jobs:
     - name: Notify failure
       if: failure()
       run: echo "Tests failed!"
-
-    # - name: Upload coverage reports to Codecov with GitHub Action
-    #   uses: codecov/codecov-action@v3
-
-      # permisos de ejecucion a toda la carpeta de tools
-      # ejecutar hardware simulator y cargarle los tests
-      # ejecutar los tests
-      # guardar resultados
+  
+  # TODO: change how to run tests for next projects
