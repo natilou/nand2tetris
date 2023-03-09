@@ -1,0 +1,33 @@
+name: Testing
+on: [push, pull_request]
+
+jobs:
+  test_project:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install java
+      run: sudo apt-get install default-jdk 
+    - name: Make nand2tetris tools executable
+      run: find tools/ -type f -iname "*.sh" -exec chmod +x {} +;
+    - name: Execute hardware simulator
+      run: tools/HardwareSimulator.sh
+    - name: Run test
+      run: |
+          for file in projects/01/*.tst; do
+            tools/HardwareSimulator.sh "$file"
+          done
+    - name: Notify success
+      if: success()
+      run: echo "Test passed!"
+    - name: Notify failure
+      if: failure()
+      run: echo "Tests failed!"
+
+    # - name: Upload coverage reports to Codecov with GitHub Action
+    #   uses: codecov/codecov-action@v3
+
+      # permisos de ejecucion a toda la carpeta de tools
+      # ejecutar hardware simulator y cargarle los tests
+      # ejecutar los tests
+      # guardar resultados
