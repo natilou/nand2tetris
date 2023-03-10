@@ -14,7 +14,7 @@ jobs:
       run: tools/HardwareSimulator.sh
     - name: Run tests
       run: |
-          for i in {1..1}; do      
+          for i in {1..2}; do      
             for file in projects/0"$i"/*.tst; do
               tools/HardwareSimulator.sh "$file"
             done;
