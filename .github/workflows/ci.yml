@@ -16,7 +16,8 @@ jobs:
       run: |
           for i in {1..2}; do      
             for file in projects/0"$i"/*.tst; do
-              tools/HardwareSimulator.sh "$file"
+              echo "$file";
+              tools/HardwareSimulator.sh "$file";
             done;
           done
     - name: Notify success
