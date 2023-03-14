@@ -13,13 +13,10 @@ jobs:
     - name: Execute hardware simulator
       run: tools/HardwareSimulator.sh
     - name: Run tests
-      run: |
-          for i in {1..2}; do      
-            for file in projects/0"$i"/*.tst; do
-              echo "$file";
-              tools/HardwareSimulator.sh "$file";
-            done;
-          done
+      run: |      
+        for file in projects/01/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
+        for file in projects/02/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
+        for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
