@@ -17,6 +17,7 @@ jobs:
         for file in projects/01/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/02/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
+        for file in projects/04/**/*.tst; do echo "$file"; tools/CPUEmulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
