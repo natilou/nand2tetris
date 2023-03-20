@@ -12,11 +12,14 @@ jobs:
       run: find tools/ -type f -iname "*.sh" -exec chmod +x {} +;
     - name: Execute hardware simulator
       run: tools/HardwareSimulator.sh
+    - name: Execute CPU emulator
+      run: tools/CPUEmulator.sh
     - name: Run tests
       run: |      
         for file in projects/01/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/02/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
+        for file in projects/04/**/*.tst; do echo "$file"; tools/CPUEmulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"

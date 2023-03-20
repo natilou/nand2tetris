@@ -10,3 +10,52 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+
+// RAM[2] = 0
+@R2
+M=0
+
+// if R0 == 0 goto END else goto LOOP
+@R0
+D=M
+
+@LOOP
+D;JGT
+
+@END
+D;JEQ
+
+// if R1 == 1 goto END else goto LOOP
+@R1
+D=M
+
+@LOOP
+D;JGT
+
+@END
+D;JEQ
+
+(LOOP)
+// R2 = RO * R1
+@R2
+D=M
+
+// R2 = R2 + R1
+@R1
+D=D+M
+
+// RESULT TO R2
+@R2
+M=D
+
+// R0 - 1
+@R0
+D=M-1
+M=D
+
+@LOOP
+D;JGT
+
+(END)
+@END
+0;JMP
