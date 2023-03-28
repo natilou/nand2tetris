@@ -14,9 +14,9 @@
 // Put your code here.
 
 (INIT)
-@8192
-D=A
-@n
+@8192     // 8k memory words of 16bits --> 8 x 1024 = 8192
+D=A 
+@n        // index start at 8192
 M=D
 
 (LOOP)
@@ -26,31 +26,31 @@ D=M
 @INIT
 D;JLT
 
-@KBD
+@KBD     // get keyboard (selected data memory registrer)
 D=M
 
-@WHITE
+@WHITE   // if RAM[KBD] == 0 goto white
 D;JEQ
 
-@BLACK
+@BLACK   // else goto BLACK
 D;JMP
 
 // WHITE SCREEN
 (WHITE)
-@SCREEN
+@SCREEN   // get screen address register
 D=A
-@n
+@n       // word address = sum screen address + index 
 A=D+M
-M=0
+M=0      // word calue = 0
 @LOOP
 0;JMP
 
 // BLACK SCREEN
 (BLACK)
-@SCREEN
+@SCREEN  // get screen address register
 D=A
-@n
+@n       // word address = sum screen address + index
 A=D+M
-M=-1
+M=-1     // word value = -1
 @LOOP
 0;JMP

@@ -33,11 +33,74 @@ CHIP CPU {
                          // program (reset==1) or continue executing
                          // the current program (reset==0).
 
-    OUT outM[16],        // M value output
+    OUT outM[16],        // M value output --> RAM[addressM] = outM
         writeM,          // Write to M? 
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // ALU
+    ALU(x=outD, y=outAM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out=outALU, zr=zr, ng=ng);
+
+    // Registers
+    ARegister(in=inA, load=loadA, out=outA, out[0..14]=addressM);
+    DRegister(in=outALU, load=loadD, out=outD);
+    PC(in=outA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+
+    // Mux
+    Mux16(a=outALU, b=instruction, sel=instA, out=inA);
+    Mux16(a=outA, b=inM, sel=AMtoALU, out=outAM);
+    
+    // Decoder
+
+        // instA
+        Not(in=instruction[15], out=instA);
+
+        // loadD
+        And(a=instruction[15], b=instruction[4], out=loadD);
+
+        //loadA
+        Or(a=instA, b=instruction[5], out=loadA);
+
+        //loadPC
+  
+            // positive ALU output (zr , ng)
+            Or(a=zr, b=ng, out=out1);
+            Not(in=out1, out=positive);
+            
+            And(a=instruction[0], b=positive, out=jgt);
+
+            //JEQ condition
+            And(a=instruction[1], b=zr, out=jeq);
+
+            //JLT condition
+            And(a=instruction[2], b=ng, out=jlt);
+
+            //JGE condition
+            Or(a=jgt, b=jeq, out=jge);
+
+            //JNE condition
+            Or(a=jgt, b=jlt, out=jne);
+
+            // JLE condition
+            Or(a=jlt, b=jeq, out=jle);
+
+            // JMP condition
+            Or(a=jgt, b=jle, out=jmp);
+
+            // Nested or conditions
+            Or(a=jgt, b=jeq, out=j1);
+            Or(a=jlt, b=j1, out=j2);
+            Or(a=jge, b=j2, out=j3);
+            Or(a=jne, b=j3, out=j4);
+            Or(a=jle, b=j4, out=j5);
+            Or(a=jmp, b=j5, out=jump);
+
+            And(a=instruction[15], b=jump, out=loadPC);
+            
+        // AMtoALU
+        And(a=instruction[15], b=instruction[12], out=AMtoALU);
+
+        // writeM
+        And(a=instruction[15], b=instruction[3], out=writeM);
 }
