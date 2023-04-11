@@ -1,3 +1,4 @@
 *.out
 /projects/04/fill/Fill.tst
 /projects/05/Memory.tst
+__pycache__
