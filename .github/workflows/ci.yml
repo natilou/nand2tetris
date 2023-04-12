@@ -27,5 +27,5 @@ jobs:
     - name: Notify failure
       if: failure()
       run: echo "Tests failed!"
-  
-  # TODO: change how to run tests for next projects
+    
+    # TODO: add test for project 6

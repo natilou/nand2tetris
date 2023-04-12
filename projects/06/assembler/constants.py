@@ -1,3 +1,6 @@
+from utils import convert_decimal_to_binary
+
+
 DEST = {
     'null': '000',
     'M': '001',
@@ -50,4 +53,16 @@ COMP = {
     'M-D': '1000111',
     'D&M': '1000000',
     'D|M': '1010101',
+}
+
+PREDEFINED_R = { f'R{i}': convert_decimal_to_binary(i) for i in range(16) }
+
+PREDEFINED_SYMBOLS = {
+    'SP': convert_decimal_to_binary(0),
+    'LCL': convert_decimal_to_binary(1), 
+    'ARG': convert_decimal_to_binary(2),
+    'THIS': convert_decimal_to_binary(3),
+    'THAT': convert_decimal_to_binary(4), 
+    'SCREEN': convert_decimal_to_binary(16384),
+    'KBD': convert_decimal_to_binary(24572),
 }
