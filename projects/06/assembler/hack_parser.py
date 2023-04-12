@@ -14,7 +14,7 @@ class HackParser:
     
     @property
     def hack_file(self):
-        self._hack_file = open(f'{self.filename}.hack', 'x')
+        self._hack_file = open(f'{self.filename}1.hack', 'x')
         return self._hack_file
 
     def read_file(self, file) -> None:
@@ -22,7 +22,12 @@ class HackParser:
         self._asm_file_lines = len(self._asm_file.readlines())
         self._asm_file.seek(0)
         self._lines_read = 0
-   
+        self.instruction_line = -1
+    
+    def reset_file(self):
+        self._asm_file.seek(0)
+        self._lines_read = 0
+        self._instruction_type = ''
 
     @property
     def has_more_lines(self) -> bool:
@@ -38,15 +43,22 @@ class HackParser:
         elif current_line.startswith('@'):
             self._current_instruction = current_line
             self._instruction_type = InstructionType.A
+            self.instruction_line +=1
       
         elif current_line.startswith('('):
             self._current_instruction = current_line
             self._instruction_type = InstructionType.L
         
-        elif current_line[0] in ('ADM') or ';' in current_line:
-            self._current_instruction = current_line
+        else:
+            try:
+                comment_index = current_line.index('/')
+                self._current_instruction = current_line[:comment_index].strip()
+            except:
+                self._current_instruction = current_line
+
             self._instruction_type = InstructionType.C
             self._get_symbolic_c_instruction()
+            self.instruction_line +=1
         
     def _get_symbolic_c_instruction(self) -> None:
         if ';' in self._current_instruction:
