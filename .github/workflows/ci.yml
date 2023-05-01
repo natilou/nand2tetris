@@ -47,7 +47,7 @@ jobs:
       if: failure()
       run: echo "Tests failed!"
   
-  test_go:
+  build_go:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -55,9 +55,33 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.20'
+    - name: Build
+      run: |
+        cd projects/06/go-assembler
+        go build -o assembler
+        cd
+    - name: Upload assembler binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: assembler
+        path: projects/06/go-assembler/assembler
+
+  test_go:
+    needs: build_go
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download assembler binary from build_go
+      uses: actions/download-artifact@v3
+      with:
+        name: assembler
+    - name: Grant executable permission to assembler and move it to projects/06 directory
+      run: |
+        chmod +x assembler
+        mv assembler projects/06/go-assembler
     - name: Run tests
       run: |
-        for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/main "$file"; done;
+        for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/assembler "$file"; done;
         for file in projects/06/**/*-go.hack; do
             echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
             diff --brief "$file" "${file/-go.hack/.hack}"
