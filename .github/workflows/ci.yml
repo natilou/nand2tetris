@@ -2,28 +2,34 @@ name: Testing
 on: pull_request
 
 jobs:
-  test_project:
+  test_hdl:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Install java
       run: sudo apt-get install default-jdk 
-    - name: Install python3
-      run: sudo apt-get install python3.10
-    - name: Install go
-      run: sudo apt install golang-go
-    - name: Execute hardware simulator
-      run: tools/HardwareSimulator.sh
-    - name: Execute CPU emulator
-      run: tools/CPUEmulator.sh
     - name: Run tests
       run: |      
         for file in projects/01/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/02/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/04/**/*.tst; do echo "$file"; tools/CPUEmulator.sh "$file"; done;
-        for file in projects/05/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
-        echo "Python assembler"
+        for file in projects/05/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;      
+    - name: Notify success
+      if: success()
+      run: echo "Test passed!"
+    - name: Notify failure
+      if: failure()
+      run: echo "Tests failed!"
+
+  test_python:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install python3
+      run: sudo apt-get install python3.10
+    - name: Run tests
+      run: |
         for file in projects/06/**/*.asm; do echo "$file"; python3 projects/06/assembler/hack_assembler.py "$file"; done;
         for file in projects/06/**/*-py.hack; do
             echo "Checking $file and ${file/-py.hack/.hack} with PYTHON assembler";
@@ -32,8 +38,22 @@ jobs:
             else
                 echo "The content of the ${file} and ${file/-py.hack/.hack} are different"
             fi
-        done;
-        echo "Go assembler"
+        done;      
+    - name: Notify success
+      if: success()
+      run: echo "Test passed!"
+    - name: Notify failure
+      if: failure()
+      run: echo "Tests failed!"
+  
+  test_go:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install go
+      run: sudo apt install golang-go
+    - name: Run tests
+      run: |
         for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/main "$file"; done;
         for file in projects/06/**/*-go.hack; do
             echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
