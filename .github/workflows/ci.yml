@@ -35,11 +35,7 @@ jobs:
         for file in projects/06/**/*.asm; do echo "$file"; python3 projects/06/assembler/hack_assembler.py "$file"; done;
         for file in projects/06/**/*-py.hack; do
             echo "Checking $file and ${file/-py.hack/.hack} with PYTHON assembler";
-            if cmp -s "$file" "${file/-py.hack/.hack}"; then
-                echo "The content of the ${file} and ${file/-py.hack/.hack} are the same"
-            else
-                echo "The content of the ${file} and ${file/-py.hack/.hack} are different"
-            fi
+            diff --brief "$file" "${file/-py.hack/.hack}"
         done;      
     - name: Notify success
       if: success()
@@ -61,11 +57,7 @@ jobs:
         for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/main "$file"; done;
         for file in projects/06/**/*-go.hack; do
             echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
-            if cmp -s "$file" "${file/-go.hack/.hack}"; then
-                echo "The content of the ${file} and ${file/-go.hack/.hack} are the same"
-            else
-                echo "The content of the ${file} and ${file/-go.hack/.hack} are different"
-            fi
+            diff --brief "$file" "${file/-go.hack/.hack}"
         done;
     - name: Notify success
       if: success()
