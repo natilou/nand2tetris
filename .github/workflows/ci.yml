@@ -8,6 +8,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install java
       run: sudo apt-get install default-jdk 
+    - name: Install python3
+      run: sudo apt-get install python3.10
+    - name: Install go
+      run: sudo apt install golang-go
     - name: Make nand2tetris tools executable
       run: find tools/ -type f -iname "*.sh" -exec chmod +x {} +;
     - name: Execute hardware simulator
@@ -21,6 +25,26 @@ jobs:
         for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/04/**/*.tst; do echo "$file"; tools/CPUEmulator.sh "$file"; done;
         for file in projects/05/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
+        echo "Python assembler"
+        for file in projects/06/**/*.asm; do echo "$file"; python3 projects/06/assembler/hack_assembler.py "$file"; done;
+        for file in projects/06/**/*-py.hack; do
+            echo "Checking $file and ${file/-py.hack/.hack} with PYTHON assembler";
+            if cmp -s "$file" "${file/-py.hack/.hack}"; then
+                echo "The content of the ${file} and ${file/-py.hack/.hack} are the same"
+            else
+                echo "The content of the ${file} and ${file/-py.hack/.hack} are different"
+            fi
+        done;
+        echo "Go assembler"
+        for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/main "$file"; done;
+        for file in projects/06/**/*-go.hack; do
+            echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
+            if cmp -s "$file" "${file/-go.hack/.hack}"; then
+                echo "The content of the ${file} and ${file/-go.hack/.hack} are the same"
+            else
+                echo "The content of the ${file} and ${file/-go.hack/.hack} are different"
+            fi
+        done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
@@ -28,4 +52,3 @@ jobs:
       if: failure()
       run: echo "Tests failed!"
     
-    # TODO: add test for project 6
