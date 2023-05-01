@@ -59,7 +59,6 @@ jobs:
       run: |
         cd projects/06/go-assembler
         go build -o assembler
-        cd
     - name: Upload assembler binary
       uses: actions/upload-artifact@v3
       with:
@@ -75,13 +74,12 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: assembler
-    - name: Grant executable permission to assembler and move it to projects/06 directory
+    - name: Grant executable permission to assembler
       run: |
         chmod +x assembler
-        mv assembler projects/06/go-assembler
     - name: Run tests
       run: |
-        for file in projects/06/**/*.asm; do echo "$file"; projects/06/go-assembler/assembler "$file"; done;
+        for file in projects/06/**/*.asm; do echo "$file"; ./assembler "$file"; done;
         for file in projects/06/**/*-go.hack; do
             echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
             diff --brief "$file" "${file/-go.hack/.hack}"
