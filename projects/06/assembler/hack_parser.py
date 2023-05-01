@@ -14,7 +14,7 @@ class HackParser:
     
     @property
     def hack_file(self):
-        self._hack_file = open(f'{self.filename}1.hack', 'x')
+        self._hack_file = open(f'{self.filename}-py.hack', 'x')
         return self._hack_file
 
     def read_file(self, file) -> None:
