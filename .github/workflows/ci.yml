@@ -12,8 +12,6 @@ jobs:
       run: sudo apt-get install python3.10
     - name: Install go
       run: sudo apt install golang-go
-    - name: Make nand2tetris tools executable
-      run: find tools/ -type f -iname "*.sh" -exec chmod +x {} +;
     - name: Execute hardware simulator
       run: tools/HardwareSimulator.sh
     - name: Execute CPU emulator
