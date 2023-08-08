@@ -12,12 +12,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Run tests
-      run: |      
+      run: |
         for file in projects/01/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/02/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/03/**/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
         for file in projects/04/**/*.tst; do echo "$file"; tools/CPUEmulator.sh "$file"; done;
-        for file in projects/05/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;      
+        for file in projects/05/*.tst; do echo "$file"; tools/HardwareSimulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
@@ -39,14 +39,16 @@ jobs:
         for file in projects/06/**/*-py.hack; do
             echo "Checking $file and ${file/-py.hack/.hack} with PYTHON assembler";
             diff --brief "$file" "${file/-py.hack/.hack}"
-        done;      
+        done;
+        for file in projects/07/**/**/*.vm; do echo "$file"; python3 projects/07/vm_translator_py/translator.py "$file"; done;
+        for file in $(find projects/07 -type f -name "*.tst" | grep -v "VME"); do echo "$file"; tools/CPUEmulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
     - name: Notify failure
       if: failure()
       run: echo "Tests failed!"
-  
+
   build_go:
     runs-on: ubuntu-latest
     steps:
@@ -90,4 +92,4 @@ jobs:
     - name: Notify failure
       if: failure()
       run: echo "Tests failed!"
-    
+

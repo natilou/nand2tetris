@@ -44,7 +44,7 @@ class HackParser:
 
         elif any(
             operand in self.raw_value
-            for operand in ["add", "sub", "neg", "gt", "eq", "lt"]
+            for operand in ["add", "sub", "neg", "gt", "eq", "lt", "or", "and", "not"]
         ):
             self.current_command = CommandType.C_ARITHMETIC
 

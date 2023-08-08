@@ -8,7 +8,7 @@ from hack_parser import HackParser
 class Translator:
     def __init__(self, file: str, filename: str) -> None:
         self.parser = HackParser(file=file)
-        self.asm_file = open(f"{filename}-py.asm", "x")
+        self.asm_file = open(f"{filename}.asm", "x")
         self.code_writer = CodeWriter(self.asm_file)
 
     def translate(self):
@@ -23,33 +23,13 @@ class Translator:
                 first_arg = self.parser.get_first_arg()
                 second_arg = self.parser.get_second_arg()
                 self.code_writer.write_push_pop_command(
-                    command=current_command, segment=first_arg, index=second_arg
+                    command=current_command.value, segment=first_arg, index=second_arg
                 )
 
             elif current_command == CommandType.C_ARITHMETIC:
                 first_arg = self.parser.get_first_arg()
                 self.code_writer.write_arithmetic_command(command=first_arg)
-
-        # arithmetic
-        # d = (2-x) + (y+ 9)
-        # push 2
-        # push x
-        # sub
-        # push y
-        # push 9
-        # add
-        # add
-        # pop d
-
-        # logical
-        # (x < 7) or (y == 8)
-        # push x
-        # push 7
-        # lt
-        # push y
-        # push 8
-        # eq
-        # or
+        self.code_writer.close()
 
 
 if __name__ == "__main__":
