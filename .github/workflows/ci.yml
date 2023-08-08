@@ -57,7 +57,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.20'
-    - name: Build
+    - name: Build Assembler
       run: |
         cd projects/06/go-assembler
         go build -o assembler
@@ -66,6 +66,15 @@ jobs:
       with:
         name: assembler
         path: projects/06/go-assembler/assembler
+    - name: Build Translator
+      run: |
+        cd projects/07/vm-translator-go
+        go build -o translator
+    - name: Upload translator binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: translator
+        path: projects/07/vm-translator-go/translator
 
   test_go:
     needs: build_go
@@ -76,9 +85,14 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: assembler
-    - name: Grant executable permission to assembler
+    - name: Download translator binary from build_go
+      uses: actions/download-artifact@v3
+      with:
+        name: translator
+    - name: Grant executable permission to Assembler and Translator
       run: |
         chmod +x assembler
+        chmod +x translator
     - name: Run tests
       run: |
         for file in projects/06/**/*.asm; do echo "$file"; ./assembler "$file"; done;
@@ -86,6 +100,8 @@ jobs:
             echo "Checking $file and ${file/-go.hack/.hack} with GO assembler";
             diff --brief "$file" "${file/-go.hack/.hack}"
         done;
+        for file in projects/07/**/**/*.vm; do echo "$file"; ./translator "$file"; done;
+        for file in $(find projects/07 -type f -name "*.tst" | grep -v "VME"); do echo "$file"; tools/CPUEmulator.sh "$file"; done;
     - name: Notify success
       if: success()
       run: echo "Test passed!"
